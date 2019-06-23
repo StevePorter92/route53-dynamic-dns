@@ -1,4 +1,4 @@
-FROM node:8.16.0-alpine as builder
+FROM node:8.16-jessie as builder
 RUN mkdir /app
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
@@ -6,7 +6,7 @@ COPY package.json /app/package.json
 RUN npm install
 
 # Add the files to arm image
-FROM arm32v7/8.16.0-alpine
+FROM arm32v7/8.16-jessie
 RUN mkdir /app
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH

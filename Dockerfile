@@ -1,5 +1,5 @@
-# Use offical Node.js image.  The image uses Apline Linux
-FROM node:8.2.1-alpine
+# Use offical Node.js image.
+FROM node:8.2.1
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE

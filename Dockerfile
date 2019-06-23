@@ -1,30 +1,22 @@
-# Use offical Node.js image.
-FROM node:8.16.0-alpine
-
-# Build-time metadata as defined at http://label-schema.org
-ARG BUILD_DATE
-ARG VCS_REF
-ARG VERSION
-LABEL org.label-schema.build-date=$BUILD_DATE \
-    org.label-schema.name="Route53 DynamicDNS" \
-    org.label-schema.description="Update AWS Route53 hosted zone with current public IP address. Alternative to Dynamic DNS services such as Dyn, No-IP, etc" \
-    org.label-schema.url="https://github.com/sjmayotte/route53-dynamic-dns" \
-    org.label-schema.vcs-ref=$VCS_REF \
-    org.label-schema.vcs-url="https://github.com/sjmayotte/route53-dynamic-dns" \
-    org.label-schema.vendor="sjmayotte" \
-    org.label-schema.version=$VERSION \
-    org.label-schema.schema-version="1.0"
-
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-# Install app dependencies
-COPY package.json /usr/src/app/
+FROM node:8.16.0-alpine as builder
+RUN mkdir /app
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json /app/package.json
 RUN npm install
 
-# Bundle app source
-COPY . /usr/src/app
+# Add the files to arm image
+FROM arm32v6/8.16.0-alpine
+RUN mkdir /app
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Same as earlier, be specific or copy everything
+ADD package.json /app/package.json
+ADD package-lock.json /app/package-lock.json
+ADD . /app
+
+COPY --from=builder /app/node_modules /app/node_modules
 
 # Run server.js every 30 seconds
 CMD ["npm", "start"]

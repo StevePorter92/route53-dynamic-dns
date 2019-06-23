@@ -1,5 +1,5 @@
 # Use offical Node.js image.
-FROM node:8.2.1
+FROM node:8.16.0-alpine
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
